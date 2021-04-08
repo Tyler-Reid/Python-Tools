@@ -25,7 +25,7 @@ df_all_rules_group_pivot = df_all_rules_group.pivot(index = 'year', columns = 'm
 # App layout
 app.layout = html.Div([
 
-    html.H1("Temperatue Data Probe Dashboard", style={'text-align': 'center'}),
+    html.H1("Temperature Data Probe Dashboard", style={'text-align': 'center'}),
 
     dcc.Dropdown(id="slct_year",
                  options=[
@@ -42,8 +42,6 @@ app.layout = html.Div([
                      {"label": "2014", "value": 2014},
                      {"label": "2015", "value": 2015},
                      {"label": "2016", "value": 2016},
-                     {"label": "2015", "value": 2015},
-                     {"label": "2016", "value": 2016},
                      {"label": "2017", "value": 2017},],
                  multi=False,
                  value=2015,
@@ -55,7 +53,7 @@ app.layout = html.Div([
 
     dcc.Graph(id='tdp_graph', figure={})
 
-])
+ ])
 
 
 # ------------------------------------------------------------------------------
@@ -72,16 +70,19 @@ def update_graph(option_slctd):
     container = "The year chosen by user was: {}".format(option_slctd)
 
     dff = df_all_rules_group_pivot.copy()
-    dff = dff[dff["year"] == option_slctd]
+    dff = dff[dff.index == option_slctd]
 
    # dff = dff[dff["Affected by"] == "Varroa_mites"]
 
     # Plotly Express
 
-dfpx = df_all_rules_group_pivot
+    dfpx = df_all_rules_group_pivot
 
-fig = px.density_heatmap(dfpx, x="year", y="month", nbinsx=15, nbinsy=12, color_continuous_scale="Viridis")
-fig.show()
+    fig = px.imshow(dff, x= dff.columns.unique(), y= dff.index, nbinsx=15, nbinsy=1, color_continuous_scale="Viridis")
+    fig.update_xaxes(nticks=12)
+    fig.update_xaxes(tick0=1, dtick=1)
+    fig.update_yaxes(nticks=len(dff.columns))
+    fig.update_yaxes(tick0=1, dtick=1)
 
 
 
@@ -115,7 +116,7 @@ fig.show()
     #     geo=dict(scope='usa'),
     # )
 
-return container, fig
+    return container, fig
 
 
 # ------------------------------------------------------------------------------
